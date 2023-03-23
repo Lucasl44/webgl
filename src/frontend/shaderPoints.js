@@ -1,4 +1,4 @@
-export function shaderTriangle(el) {
+export function shaderPoints(el) {
   if (el) {
     const canvas = document.querySelector('canvas');
     const gl = canvas.getContext('webgl');
@@ -9,9 +9,10 @@ export function shaderTriangle(el) {
     const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
 
     const vShaderSource = `
+      attribute vec2 position;
       void main() {
         gl_PointSize = 20.;
-        gl_Position = vec4(0, 0, 0, 1);
+        gl_Position = vec4(position / 2., 0, 1);
       }
     `;
 
@@ -30,7 +31,28 @@ export function shaderTriangle(el) {
     gl.linkProgram(program);
     gl.useProgram(program);
 
-    gl.drawArrays(gl.POINTS, 0, 1);
+    const positionPointer = gl.getAttribLocation(program, 'position');
+    const positionData = new Float32Array([
+      -1.0, -1.0,
+      1.0, 1.0,
+      -1.0, 1.0,
+      1.0, -1.0
+    ]);
+    const positionBuffer = gl.createBuffer(gl.ARRAY_BUFFER);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, positionData, gl.STATIC_DRAW);
+
+    const attributeSize = 2;
+    const type = gl.FLOAT;
+    const normalised = false;
+    const stride = 0;
+    const offset = 0;
+
+    gl.enableVertexAttribArray(positionPointer);
+    gl.vertexAttribPointer(positionPointer, attributeSize, type, normalised, stride, offset);
+
+    gl.drawArrays(gl.POINTS, 0, positionData.length / 2);
   }
 }
 
