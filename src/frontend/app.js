@@ -8,7 +8,7 @@ export const App = () => {
   };
 
   useEffect(() => {
-    shaderTriangle(el)
+    shaderPoints(el)
   }, [el]);
 
   return (
