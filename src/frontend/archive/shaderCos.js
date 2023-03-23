@@ -1,4 +1,4 @@
-export function triangleShader(el) {
+export function shaderCos(el) {
   if (el) {
     const canvas = document.querySelector('canvas');
     const gl = canvas.getContext('webgl');
