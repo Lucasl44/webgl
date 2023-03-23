@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { shader } from './archive/shader.js';
-import { shaderPoints } from './shaderPoints.js';
+import { triangleShader } from './triangleShader.js';
 
 export const App = () => {
   const [el, setEl] = useState(null);
@@ -8,7 +8,7 @@ export const App = () => {
   };
 
   useEffect(() => {
-    shaderPoints(el)
+    triangleShader(el)
   }, [el]);
 
   return (

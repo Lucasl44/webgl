@@ -1,4 +1,4 @@
-export function shaderPoints(el) {
+export function triangleShader(el) {
   if (el) {
     const canvas = document.querySelector('canvas');
     const gl = canvas.getContext('webgl');
@@ -9,10 +9,14 @@ export function shaderPoints(el) {
     const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
 
     const vShaderSource = `
-      attribute vec2 position;
+      attribute float position;
+      uniform float width;
+
+      #define M_PI 3.1415926535897932384626433832795
       void main() {
-        gl_PointSize = 20.;
-        gl_Position = vec4(position / 2., 0, 1);
+        float x = position / width * 2. -1.;
+        gl_PointSize = 2.;
+        gl_Position = vec4(x, cos(x * M_PI), 0, 1);
       }
     `;
 
@@ -32,18 +36,26 @@ export function shaderPoints(el) {
     gl.useProgram(program);
 
     const positionPointer = gl.getAttribLocation(program, 'position');
-    const positionData = new Float32Array([
-      -1.0, -1.0,
-      1.0, 1.0,
-      -1.0, 1.0,
-      1.0, -1.0
-    ]);
+    const widthUniformLocation = gl.getUniformLocation(program, 'width');
+
+    gl.uniform1f(widthUniformLocation, canvas.width);
+
+    const points = [];
+
+    for (let i = 0; i < canvas.width; i++) {
+//      const x = i / canvas.width * 2 - 1;
+//      const y = Math.cos(x * Math.PI);
+
+      points.push(i);
+    }
+    console.log(points);
+    const positionData = new Float32Array(points);
     const positionBuffer = gl.createBuffer(gl.ARRAY_BUFFER);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, positionData, gl.STATIC_DRAW);
 
-    const attributeSize = 2;
+    const attributeSize = 1;
     const type = gl.FLOAT;
     const normalised = false;
     const stride = 0;
@@ -52,7 +64,7 @@ export function shaderPoints(el) {
     gl.enableVertexAttribArray(positionPointer);
     gl.vertexAttribPointer(positionPointer, attributeSize, type, normalised, stride, offset);
 
-    gl.drawArrays(gl.POINTS, 0, positionData.length / 2);
+    gl.drawArrays(gl.POINTS, 0, positionData.length);
   }
 }
 
