@@ -13,9 +13,9 @@ export function shaderTriangle(el) {
       uniform vec2 resolution;
 
       void main() {
-        vec2 transformedPosition = position / resolution * 2. - 1.;
+        vec2 transformedPosition = position / resolution * 2.0 - 1.0;
         gl_PointSize = 2.;
-        gl_Position = vec4(transformedPosition, 0, 1);
+        gl_Position = vec4(transformedPosition, 0., 1.);
       }
     `;
 
@@ -27,13 +27,27 @@ export function shaderTriangle(el) {
       }
     `;
 
-    compileShader(gl, vertexShader, vShaderSource);
-    compileShader(gl, fragmentShader, fShaderSource);
+    compileShader(vertexShader, vShaderSource);
+    if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+      alert(`An error occured compiling the shaders: ${gl.getShaderInfoLog(vertexShader)}`);
+      gl.deleteShader(vertexShader);
+      return null;
+    }
+    compileShader(fragmentShader, fShaderSource);
+    if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+      alert(`An error occured compiling the shaders: ${gl.getShaderInfoLog(fragmentShader)}`);
+      gl.deleteShader(fragmentShader);
+      return null;
+    }
 
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
 
     gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.log(`Unable to initialize the shader program: ${gl.getProgramInfoLog(program)}`);
+    };
+
     gl.useProgram(program);
 
     const positionPointer = gl.getAttribLocation(program, 'position');
@@ -54,7 +68,7 @@ export function shaderTriangle(el) {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, positionData, gl.STATIC_DRAW);
 
-    const attributeSize = 1;
+    const attributeSize = 2;
     const type = gl.FLOAT;
     const normalised = false;
     const stride = 0;
@@ -64,15 +78,16 @@ export function shaderTriangle(el) {
     gl.vertexAttribPointer(positionPointer, attributeSize, type, normalised, stride, offset);
 
     gl.drawArrays(gl.TRIANGLES, 0, positionData.length / 2);
-}
 
-function compileShader(gl, shader, source) {
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
+    function compileShader(shader, source) {
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
 
-  const log = gl.getShaderInfoLog(shader);
+      const log = gl.getShaderInfoLog(shader);
 
-  if (log) {
-    throw new Error(log);
+      if (log) {
+        throw new Error(log);
+      }
+    }
   }
 }
