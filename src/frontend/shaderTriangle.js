@@ -59,10 +59,7 @@ export function shaderTriangle(el) {
 
     const triangles = [
       0, 0,
-      0, 100,
-      canvas.width, 0,
-      canvas.width, 100,
-      0, 100,
+      canvas.width / 2, canvas.height,
       canvas.width, 0
     ];
     const positionData = new Float32Array(triangles);
