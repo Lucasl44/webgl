@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { shader } from './archive/shader.js';
-import { shaderHexagon } from './shaderTriangle.js';
+import { shaderCircle } from './shaderTriangle.js';
 
 export const App = () => {
   const [el, setEl] = useState(null);
@@ -8,7 +8,7 @@ export const App = () => {
   };
 
   useEffect(() => {
-    shaderHexagon(el)
+    shaderCircle(el)
   }, [el]);
 
   return (
