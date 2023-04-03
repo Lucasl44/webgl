@@ -1,4 +1,4 @@
-export function shaderHexagon(el) {
+export function shaderRectangle(el) {
   if (el) {
     const canvas = document.querySelector('canvas');
     const gl = canvas.getContext('webgl');
@@ -57,22 +57,14 @@ export function shaderHexagon(el) {
     gl.uniform2fv(resolutionUniformLocation, [canvas.width, canvas.height]);
     gl.uniform4fv(colorUniformLocation, [255, 0, 0, 255]);
 
-    const triangles = createHexagon(canvas.width / 2, canvas.height / 2, canvas.height / 2, 6);
-
-    function createHexagon(centerX, centerY, radius, segmentCount) {
-      const vertices = [];
-      const segmentAngle = Math.PI * 2 / (segmentCount - 1)
-      for(let i = 0; i < Math.PI * 2; i += segmentAngle) {
-        const from = i;
-        const to = i + segmentAngle;
-        vertices.push(centerX, centerY);
-        vertices.push(centerX + Math.cos(from) * radius, centerY + Math.sin(from) * radius);
-        vertices.push(centerX + Math.cos(to) * radius, centerY + Math.sin(to) * radius);
-
-      }
-      return vertices;
-    }
-
+    const triangles = [
+      0, 150,
+      150, 150,
+      0, 0,
+      0, 0,
+      150, 150,
+      150, 0
+    ];
     const positionData = new Float32Array(triangles);
     const positionBuffer = gl.createBuffer(gl.ARRAY_BUFFER);
 
